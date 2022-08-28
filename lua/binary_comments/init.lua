@@ -43,25 +43,28 @@ end
 --   return str, start_pos[1], margin_length
 -- end
 
+
+local function valid(pos1, pos2)
+  local mode = fn.mode()
+  if mode ~= 'v' and mode ~= 'V' then
+    api.nvim_echo({ { 'flag_comments.nvim: support only visual mode!', 'ErrorMsg' } }, true, {})
+    return false
+  end
+
+  if pos1[0] ~= pos2[0] then
+    api.nvim_echo({ { 'flag_comments.nvim: not support multi line!', 'ErrorMsg' } }, true, {})
+    return false
+  end
+end
+
 local M = {}
 
 M.draw = function()
-  local mode = fn.mode()
-
-  if mode ~= 'v' and mode ~= 'V' then
-    api.nvim_echo({ { 'flag_comments.nvim: support only visual mode!', 'ErrorMsg' } }, true, {})
-    return
-  end
-
-  -- if mode == 'n' then
-  --   return fn.escape(fn.expand('<cword>'), [==[~\.^$[]*]==])
-  -- end
 
   local dot_pos = vim.list_slice(fn.getcharpos("."), 2, 3)
   local v_pos = vim.list_slice(fn.getcharpos("v"), 2, 3)
 
-  if dot_pos[0] ~= v_pos[0] then
-    api.nvim_echo({ { 'flag_comments.nvim: not support multi line!', 'ErrorMsg' } }, true, {})
+  if not valid(dot_pos, v_pos) then
     return
   end
 
