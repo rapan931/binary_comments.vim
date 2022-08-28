@@ -77,11 +77,9 @@ M.draw = function()
   local binary_len
   if str:match('^[01]*$') then
     binary_len = #str
-    pp('01')
   elseif (str:sub(1, 2) == '0b') and #str:sub(3) > 0 and str:sub(3):match('[01]') then
     margin_length = margin_length + 2
     binary_len = #str - 2
-    pp('0b')
   else
     api.nvim_echo({ { 'flag_comments.nvim: not binary!', 'ErrorMsg' } }, true, {})
     api.nvim_feedkeys(api.nvim_replace_termcodes('<esc>', true, false, true), 'n', true)
