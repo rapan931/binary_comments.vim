@@ -55,6 +55,8 @@ local function valid(pos1, pos2)
     api.nvim_echo({ { 'flag_comments.nvim: not support multi line!', 'ErrorMsg' } }, true, {})
     return false
   end
+
+  return true
 end
 
 local M = {}
