@@ -1,6 +1,24 @@
 local api = vim.api
 local fn = vim.fn
 
+---config
+---Use a character with a display width of 2 for the ruled line.
+---@class BinaryCommentsConfig
+---@field top_left_corner string
+---@field top_light_corner string
+---@field bottom_left_corner string
+---@field bottom_light_corner string
+---@field vert string
+---@field hori string
+local config = {
+  top_left_corner = fn.strdisplaywidth('┌') and '┌' or '+',
+  top_light_corner = fn.strdisplaywidth('┐') and '┐' or '+',
+  bottom_left_corner = fn.strdisplaywidth('└') and '└' or '+',
+  bottom_light_corner = fn.strdisplaywidth('┐') and '┐' or '+',
+  vert = '|',
+  hori = '-',
+}
+
 ---Sort pos1 and pos2 (**line is same. compare col only**)
 ---@param pos1 string[] [line, col]
 ---@param pos2 string[] [line, col]
@@ -12,37 +30,6 @@ local function sort_pos(pos1, pos2)
   end
   return pos1, pos2
 end
-
--- ---get binary string (if string retrieval fails, return nil)
--- ---@param mode string
--- ---@return string | nil binary string
--- ---@return number | nil line number
--- ---@return number | nil margin before binary
--- local function get_binary_string(mode)
---   if mode ~= 'v' and mode ~= 'V' then
---     api.nvim_echo({ { 'flag_comments.nvim: support only visual mode!', 'ErrorMsg' } }, true, {})
---     return nil, nil, nil
---   end
---
---   -- if mode == 'n' then
---   --   return fn.escape(fn.expand('<cword>'), [==[~\.^$[]*]==])
---   -- end
---
---   local dot_pos = vim.list_slice(fn.getcharpos("."), 2, 3)
---   local v_pos = vim.list_slice(fn.getcharpos("v"), 2, 3)
---
---   if dot_pos[0] ~= v_pos[0] then
---     api.nvim_echo({ { 'flag_comments.nvim: not support multi line!', 'ErrorMsg' } }, true, {})
---     return
---   end
---
---   local start_pos, end_pos = sort_pos(dot_pos, v_pos)
---   local str = fn.strcharpart(fn.getline(start_pos[1]), start_pos[2] - 1, end_pos[2] - start_pos[2] + 1)
---   local margin_length = #fn.strcharpart(fn.getline(start_pos[1]), 0, start_pos[2] - 1)
---
---   return str, start_pos[1], margin_length
--- end
-
 
 local function valid(pos1, pos2)
   local mode = fn.mode()
@@ -60,6 +47,11 @@ local function valid(pos1, pos2)
 end
 
 local M = {}
+
+---@param override bistahieversorConfig
+M.setup = function(override)
+  config = vim.tbl_extend('force', config, override)
+end
 
 M.draw = function()
 
@@ -91,9 +83,9 @@ M.draw = function()
   local blank = ' '
   local blanks = blank:rep(margin_length)
 
-  local vert = '|'
-  local hori = '-'
-  local corner = '+'
+  local vert = config.vert
+  local hori = config.hori
+  local corner = config.bottom_left_corner
 
   local header = blanks .. vert:rep(binary_len)
   api.nvim_buf_set_lines(0, line_nr, line_nr, false, { header })
