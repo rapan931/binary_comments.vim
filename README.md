@@ -1,2 +1,2 @@
-# binary_comments.nvim
+# binary_comments.vim
 Add comments to the binary
