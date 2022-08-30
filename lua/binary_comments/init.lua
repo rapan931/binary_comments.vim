@@ -15,11 +15,11 @@ local blank = ' '
 ---@field draw_bottom boolean draw_position
 local config = {
   corner = {
-    top_left = fn.strdisplaywidth('┌') and '┌' or '+',
-    bottom_left = fn.strdisplaywidth('└') and '└' or '+',
+    top_left = fn.strdisplaywidth('┌') == 1 and '┌' or '+',
+    bottom_left = fn.strdisplaywidth('└') == 1 and '└' or '+',
   },
-  vert = '|',
-  hori = '-',
+  vert = fn.strdisplaywidth('│') == 1 and '│' or '|',
+  hori = fn.strdisplaywidth('─') == 1 and '─' or '-',
   draw_bottom = true,
 }
 
