@@ -12,7 +12,7 @@ local blank = ' '
 ---@field corner BinaryCommentsCorner
 ---@field vert string
 ---@field hori string
----@field draw_bottom boolean draw_position
+---@field draw_below boolean draw_position
 local config = {
   corner = {
     top_left = fn.strdisplaywidth('┌') == 1 and '┌' or '+',
@@ -20,14 +20,14 @@ local config = {
   },
   vert = fn.strdisplaywidth('│') == 1 and '│' or '|',
   hori = fn.strdisplaywidth('─') == 1 and '─' or '-',
-  draw_bottom = true,
+  draw_below = true,
 }
 
 ---Sort pos1 and pos2 (**line is same. compare col only**)
----@param pos1 string[] [line, col]
----@param pos2 string[] [line, col]
----@return string[] [line, col] start_pos
----@return string[] [line, col] end_pos
+---@param pos1 number[] [line, col]
+---@param pos2 number[] [line, col]
+---@return number[] [line, col] start_pos
+---@return number[] [line, col] end_pos
 local function sort_pos(pos1, pos2)
   if pos1[2] > pos2[2] then
     return pos2, pos1
@@ -74,7 +74,7 @@ local function valid(pos1, pos2)
 end
 
 local function get_corner()
-  if config.draw_bottom then
+  if config.draw_below then
     return config.corner.bottom_left
   else
     return config.corner.top_left
@@ -83,7 +83,7 @@ end
 
 ---get binary length
 ---@param str string binary("0b1111" or "1111")
----@param start_pos string binary head position
+---@param start_pos number[] [line, col]
 ---@return number | nil binary_length(if str is "0b1111", return 4)
 ---@return number | nil margin length(length of head of line to binary. if line is "      0b1111", return 8)
 local function binary_length(str, start_pos)
@@ -106,9 +106,9 @@ end
 
 ---create ruled line
 ---@param str string binary("0b1111" or "1111")
----@param start_pos string binary head position
+---@param start_pos number[] [line, col]
 ---@return string | nil header. if str "0b11111", return "│││││"
----@return string[] | nil rows list. if config.draw_bottom is false, reverse body in this function
+---@return string[] | nil rows list. if config.draw_below is false, reverse body in this function
 local function create_ruled_line(str, start_pos)
 
   local binary_len, margin_len = binary_length(str, start_pos)
@@ -127,15 +127,15 @@ local function create_ruled_line(str, start_pos)
     table.insert(body, s)
   end
 
-  if config.draw_bottom == false then
+  if config.draw_below == false then
     body = reverse(body)
   end
 
   return header, body
 end
 
----@return string[] [line, col] start_pos
----@return string[] [line, col] end_pos
+---@return number[] [line, col] start_pos
+---@return number[] [line, col] end_pos
 local function get_pos()
   local dot_pos = vim.list_slice(fn.getcharpos("."), 2, 3)
   local v_pos = vim.list_slice(fn.getcharpos("v"), 2, 3)
@@ -166,7 +166,7 @@ M.draw = function()
 
   local line_nr = start_pos[1]
 
-  if config.draw_bottom then
+  if config.draw_below then
     api.nvim_buf_set_lines(0, line_nr, line_nr, false, { header })
     api.nvim_buf_set_lines(0, line_nr + 1, line_nr + 1, false, body)
   else
