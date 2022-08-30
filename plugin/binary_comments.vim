@@ -3,4 +3,4 @@ if has('nvim') || exists('g:loaded_binary_comments')
 endif
 let g:loaded_binary_comments = 1
 
-xnoremap <expr> <Plug>(binary-comments-draw) <Cmd>call binary_comments#draw()<CR><Esc>
+xnoremap <Plug>(binary-comments-draw) <Cmd>call binary_comments#draw()<CR>
