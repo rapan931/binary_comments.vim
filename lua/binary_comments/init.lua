@@ -57,7 +57,7 @@ local function valid(pos1, pos2)
     return false
   end
 
-  if pos1[0] ~= pos2[0] then
+  if pos1[1] ~= pos2[1] then
     api.nvim_echo({ { 'flag_comments.nvim: not support multi line!', 'ErrorMsg' } }, true, {})
     return false
   end
@@ -90,14 +90,13 @@ local function binary_length(str, start_pos)
   local margin_len = fn.strdisplaywidth(fn.strcharpart(fn.getline(start_pos[1]), 0, start_pos[2] - 1))
 
   local binary_len
-  if str:match('^[01]*$') then
+  if str:match('^[01]+$') then
     binary_len = #str
-  elseif (str:sub(1, 2) == '0b') and #str:sub(3) > 0 and str:sub(3):match('[01]') then
+  elseif str:match('^0b[01]+$') then
     margin_len = margin_len + 2
     binary_len = #str - 2
   else
     api.nvim_echo({ { 'flag_comments.nvim: not binary!', 'ErrorMsg' } }, true, {})
-    api.nvim_feedkeys(api.nvim_replace_termcodes('<esc>', true, false, true), 'n', true)
     return nil, nil
   end
 
@@ -142,15 +141,7 @@ local function get_pos()
   return sort_pos(dot_pos, v_pos)
 end
 
-local M = {}
-
----@param override_config BinaryCommentsConfig
-M.setup = function(override_config)
-  config = vim.tbl_extend('force', config, override_config)
-end
-
-M.draw = function()
-
+local function l_draw()
   local start_pos, end_pos = get_pos()
 
   if not valid(start_pos, end_pos) then
@@ -173,8 +164,19 @@ M.draw = function()
     api.nvim_buf_set_lines(0, line_nr - 1, line_nr - 1, false, body)
     api.nvim_buf_set_lines(0, line_nr - 1 + #body, line_nr - 1 + #body, false, { header })
   end
+end
 
-  api.nvim_feedkeys(api.nvim_replace_termcodes('<esc>', true, false, true), 'n', true)
+local M = {}
+
+---@param override_config BinaryCommentsConfig
+M.setup = function(override_config)
+  config = vim.tbl_extend('force', config, override_config)
+end
+
+---draw ruled line.
+M.draw = function()
+  l_draw()
+  api.nvim_feedkeys(api.nvim_replace_termcodes('<esc>', true, false, true), 'n', false)
 end
 
 return M
