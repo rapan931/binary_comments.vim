@@ -35,6 +35,9 @@ local function sort_pos(pos1, pos2)
   return pos1, pos2
 end
 
+---reverse list
+---@param list table
+---@return table reverse list
 local function reverse(list)
   local ret = {}
   for i = #list, 1, -1 do
@@ -43,18 +46,10 @@ local function reverse(list)
   return ret
 end
 
--- local function get_rep_list(str, num)
---   local ret = {}
---   if num < 1 then
---     return ret
---   end
---
---   for i = 1, num do
---     table.insert(ret, str)
---   end
---   return ret
--- end
-
+---Check
+---@param pos1 table [line, col]
+---@param pos2 table [line, col]
+---@return boolean valid
 local function valid(pos1, pos2)
   local mode = fn.mode()
   if mode ~= 'v' and mode ~= 'V' then
@@ -86,6 +81,11 @@ local function get_corner()
   end
 end
 
+---get binary length
+---@param str string binary("0b1111" or "1111")
+---@param start_pos string binary head position
+---@return number | nil binary_length(if str is "0b1111", return 4)
+---@return number | nil margin length(length of head of line to binary. if line is "      0b1111", return 8)
 local function binary_length(str, start_pos)
   local margin_len = fn.strdisplaywidth(fn.strcharpart(fn.getline(start_pos[1]), 0, start_pos[2] - 1))
 
@@ -104,11 +104,16 @@ local function binary_length(str, start_pos)
   return binary_len, margin_len
 end
 
+---create ruled line
+---@param str string binary("0b1111" or "1111")
+---@param start_pos string binary head position
+---@return string | nil header. if str "0b11111", return "│││││"
+---@return string[] | nil rows list. if config.draw_bottom is false, reverse body in this function
 local function create_ruled_line(str, start_pos)
 
   local binary_len, margin_len = binary_length(str, start_pos)
   if binary_len == nil or margin_len == nil then
-    return nil, nil, nil
+    return nil, nil
   end
 
   local vert = config.vert
@@ -129,28 +134,29 @@ local function create_ruled_line(str, start_pos)
   return header, body
 end
 
+---@return string[] [line, col] start_pos
+---@return string[] [line, col] end_pos
 local function get_pos()
   local dot_pos = vim.list_slice(fn.getcharpos("."), 2, 3)
   local v_pos = vim.list_slice(fn.getcharpos("v"), 2, 3)
-  return dot_pos, v_pos
+  return sort_pos(dot_pos, v_pos)
 end
 
 local M = {}
 
----@param override BinaryCommentsConfig
-M.setup = function(override)
-  config = vim.tbl_extend('force', config, override)
+---@param override_config BinaryCommentsConfig
+M.setup = function(override_config)
+  config = vim.tbl_extend('force', config, override_config)
 end
 
 M.draw = function()
 
-  local pos1, pos2 = get_pos()
+  local start_pos, end_pos = get_pos()
 
-  if not valid(pos1, pos2) then
+  if not valid(start_pos, end_pos) then
     return
   end
 
-  local start_pos, end_pos = sort_pos(pos1, pos2)
   local target = fn.strcharpart(fn.getline(start_pos[1]), start_pos[2] - 1, end_pos[2] - start_pos[2] + 1)
   local header, body = create_ruled_line(target, start_pos)
 
