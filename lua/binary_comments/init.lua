@@ -29,10 +29,17 @@ local config = {
 ---@return number[] [line, col] start_pos
 ---@return number[] [line, col] end_pos
 local function sort_pos(pos1, pos2)
-  if pos1[2] > pos2[2] then
-    return pos2, pos1
+  if pos1[1] == pos2[1] then
+    if pos1[2] > pos2[2] then
+      return pos2, pos1
+    end
+    return pos1, pos2
+  else
+    if pos1[1] > pos2[1] then
+      return pos2, pos1
+    end
+    return pos1, pos2
   end
-  return pos1, pos2
 end
 
 ---reverse list
@@ -49,9 +56,9 @@ end
 ---Check
 ---@param pos1 table [line, col]
 ---@param pos2 table [line, col]
+---@param mode string mode
 ---@return boolean valid
-local function valid(pos1, pos2)
-  local mode = fn.mode()
+local function valid(pos1, pos2, mode)
   if mode ~= 'v' and mode ~= 'V' then
     api.nvim_echo({ { 'flag_comments.nvim: support only visual mode!', 'ErrorMsg' } }, true, {})
     return false
@@ -133,18 +140,26 @@ local function create_ruled_line(str, start_pos)
   return header, body
 end
 
+---@param mode string mode
 ---@return number[] [line, col] start_pos
 ---@return number[] [line, col] end_pos
-local function get_pos()
-  local dot_pos = vim.list_slice(fn.getcharpos("."), 2, 3)
-  local v_pos = vim.list_slice(fn.getcharpos("v"), 2, 3)
-  return sort_pos(dot_pos, v_pos)
+local function get_pos(mode)
+  local dot_pos = vim.list_slice(fn.getcharpos('.'), 2, 3)
+  local v_pos = vim.list_slice(fn.getcharpos('v'), 2, 3)
+
+  local start_pos, end_pos = sort_pos(dot_pos, v_pos)
+  if mode == 'V' then
+    start_pos[2] = 1
+    end_pos[2] = fn.strchars(fn.getline(end_pos[1]))
+  end
+  return start_pos, end_pos
 end
 
 local function l_draw()
-  local start_pos, end_pos = get_pos()
+  local mode = fn.mode()
+  local start_pos, end_pos = get_pos(mode)
 
-  if not valid(start_pos, end_pos) then
+  if not valid(start_pos, end_pos, mode) then
     return
   end
 

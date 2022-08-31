@@ -12,21 +12,34 @@ let g:binary_comments#corner = get(g:, 'binary_comments#corner', #{
       \ })
 
 function! s:sort_pos(pos1, pos2) abort
-  if a:pos1[1] > a:pos2[1]
-    return [a:pos2, a:pos1]
+  if a:pos1[0] == a:pos2[0]
+    if a:pos1[1] > a:pos2[1]
+      return [a:pos2, a:pos1]
+    endif
+    return [a:pos1, a:pos2]
+  else
+    if a:pos1[0] > a:pos2[0]
+      return [a:pos2, a:pos1]
+    endif
+    return [a:pos1, a:pos2]
   endif
-  return [a:pos1, a:pos2]
 endfunction
 
-function! s:get_pos() abort
+function! s:get_pos(mode) abort
   let dot_pos = getcharpos(".")[1:2]
   let v_pos = getcharpos("v")[1:2]
-  return s:sort_pos(dot_pos, v_pos)
+  let [start_pos, end_pos] = s:sort_pos(dot_pos, v_pos)
+
+  if a:mode ==# 'V'
+    let start_pos[1] = 1
+    let end_pos[1] = strchars(getline(end_pos[0]))
+  endif
+
+  return [start_pos, end_pos]
 endfunction
 
-function! s:valid(pos1, pos2) abort
-  let mode = mode()
-  if mode !=# 'v' && mode !=# 'V'
+function! s:valid(pos1, pos2, mode) abort
+  if a:mode !=# 'v' && a:mode !=# 'V'
     echohl ErrorMsg | echo 'flag_comments.nvim: support only visual mode!' | echohl none
     return v:false
   endif
@@ -92,9 +105,10 @@ function! s:create_ruled_line(str, start_pos) abort
 endfunction
 
 function! s:draw() abort
-  let [start_pos, end_pos] = s:get_pos()
+  let mode = mode()
+  let [start_pos, end_pos] = s:get_pos(mode)
 
-  if !s:valid(start_pos, end_pos)
+  if !s:valid(start_pos, end_pos, mode)
     return
   endif
 
