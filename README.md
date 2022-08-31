@@ -51,12 +51,11 @@ vim
 ```vim
 " This sample is default value.
 " If you do not need to change the set values, there is no need to call setup
-let g:binary_comments#vert = get(g:, 'binary_comments#vert', strdisplaywidth('│') == 1 ? '│' : '|')
-let g:binary_comments#hori = get(g:, 'binary_comments#hori', strdisplaywidth('─') == 1 ? '─' : '-')
-let g:binary_comments#draw_bottom = get(g:, 'binary_comments#draw_bottom', 1)
-let g:binary_comments#draw_below = get(g:, 'binary_comments#draw_below', v:true)
-let g:binary_comments#corner = get(g:, 'binary_comments#corner', #{
+let g:binary_comments#corner = #{
       \   top_left: strdisplaywidth('┌') == 1 ? '┌' : '+',
       \   bottom_left: strdisplaywidth('└') == 1 ? '└' : '+',
-      \ })
+      \ }
+let g:binary_comments#vert = strdisplaywidth('│') == 1 ? '│' : '|'
+let g:binary_comments#hori = strdisplaywidth('─') == 1 ? '─' : '-'
+let g:binary_comments#draw_below = v:true
 ```
