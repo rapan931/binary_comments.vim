@@ -38,11 +38,11 @@ neovim
 -- If you do not need to change the set values, there is no need to call setup
 require('binary_comments').setup({
   corner = {
-    top_left = fn.strdisplaywidth('┌') == 1 and '┌' or '+',
-    bottom_left = fn.strdisplaywidth('└') == 1 and '└' or '+',
+    top_left = vim.fn.strdisplaywidth('┌') == 1 and '┌' or '+',
+    bottom_left = vim.fn.strdisplaywidth('└') == 1 and '└' or '+',
   },
-  vert = fn.strdisplaywidth('│') == 1 and '│' or '|',
-  hori = fn.strdisplaywidth('─') == 1 and '─' or '-',
+  vert = vim.fn.strdisplaywidth('│') == 1 and '│' or '|',
+  hori = vim.fn.strdisplaywidth('─') == 1 and '─' or '-',
   draw_below = true,  -- draw position, if false, ruled lines on top of binary
 })
 ```
