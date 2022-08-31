@@ -27,7 +27,7 @@ vim.keymap.set('x', 'ge', require('binary_comments').draw)
 
 vim
 ```vim
-xnoremap ge <Plug>(binary-comments-draw)
+xmap ge <Plug>(binary-comments-draw)
 ```
 
 ## Setup
