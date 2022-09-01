@@ -11,5 +11,4 @@ endif
 vim9script
 
 import autoload 'binary_comments.vim'
-" xnoremap <Plug>(binary-comments-draw) <Cmd>call binary_comments.BinaryCommentsDraw()<CR> not work
 xnoremap <Plug>(binary-comments-draw) <Cmd>call binary_comments#BinaryCommentsDraw()<CR>
