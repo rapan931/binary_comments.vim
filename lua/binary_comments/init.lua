@@ -60,19 +60,19 @@ end
 ---@return boolean valid
 local function valid(pos1, pos2, mode)
   if mode ~= 'v' and mode ~= 'V' then
-    api.nvim_echo({ { 'flag_comments.nvim: support only visual mode!', 'ErrorMsg' } }, true, {})
+    api.nvim_echo({ { 'binary_comments.nvim: support only visual mode!', 'ErrorMsg' } }, true, {})
     return false
   end
 
   if pos1[1] ~= pos2[1] then
-    api.nvim_echo({ { 'flag_comments.nvim: not support multi line!', 'ErrorMsg' } }, true, {})
+    api.nvim_echo({ { 'binary_comments.nvim: not support multi line!', 'ErrorMsg' } }, true, {})
     return false
   end
 
   local corner = config.corner
 
   if fn.strdisplaywidth(corner.top_left) ~= 1 or fn.strdisplaywidth(corner.bottom_left) ~= 1 then
-    api.nvim_echo({ { 'flag_comments.nvim: Only use a character with a display width of 1 for the ruled line!',
+    api.nvim_echo({ { 'binary_comments.nvim: Only use a character with a display width of 1 for the ruled line!',
       'ErrorMsg' } }, true, {})
     return false
   end
@@ -103,7 +103,7 @@ local function binary_length(str, start_pos)
     margin_len = margin_len + 2
     binary_len = #str - 2
   else
-    api.nvim_echo({ { 'flag_comments.nvim: not binary!', 'ErrorMsg' } }, true, {})
+    api.nvim_echo({ { 'binary_comments.nvim: not binary!', 'ErrorMsg' } }, true, {})
     return nil, nil
   end
 
