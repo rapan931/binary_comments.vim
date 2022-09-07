@@ -43,11 +43,11 @@ require('binary_comments').setup({
   },
   vert = vim.fn.strdisplaywidth('│') == 1 and '│' or '|',
   hori = vim.fn.strdisplaywidth('─') == 1 and '─' or '-',
-  draw_below = true,  -- draw position, if false, ruled lines on top of binary
+  draw_below = true,  -- draw position, if false, ruled lines on above of binary
 })
 ```
 
-vim
+vim(legacy vim script)
 ```vim
 " This sample is default value.
 " If you do not need to change the set values, there is no need to call setup
@@ -58,4 +58,17 @@ let g:binary_comments#corner = #{
 let g:binary_comments#vert = strdisplaywidth('│') == 1 ? '│' : '|'
 let g:binary_comments#hori = strdisplaywidth('─') == 1 ? '─' : '-'
 let g:binary_comments#draw_below = v:true
+```
+
+vim(vim9script)
+```vim
+" This sample is default value.
+" If you do not need to change the set values, there is no need to call setup
+g:binary_comments#corner = {
+  top_left: strdisplaywidth('┌') == 1 ? '┌' : '+',
+  bottom_left: strdisplaywidth('└') == 1 ? '└' : '+',
+}
+g:binary_comments#vert = strdisplaywidth('│') == 1 ? '│' : '|'
+g:binary_comments#hori = strdisplaywidth('─') == 1 ? '─' : '-'
+g:binary_comments#draw_below = true
 ```
