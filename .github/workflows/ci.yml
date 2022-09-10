@@ -1,0 +1,28 @@
+name: 'ci'
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  test:
+    name: Test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        vim_type: ['Neovim']
+        vim_version: ['head', 'stable']
+        os: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: notomo/action-setup-nvim-lua@v1
+      - name: 'Setup Vim'
+        id: 'vim'
+        uses: 'thinca/action-setup-vim@v1'
+        with:
+          vim_version: '${{ matrix.vim_version }}'
+          vim_type: '${{ matrix.vim_type }}'
+      - name: 'Show Vim version'
+        run: ${{ steps.vim.outputs.executable }} --version
+      - run: make test
+        env:
+          VUSTED_NVIM: ${{ steps.vim.outputs.executable }}
