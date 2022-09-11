@@ -28,6 +28,12 @@ jobs:
           vim_version: '${{ matrix.vim_version }}'
           vim_type: '${{ matrix.vim_type }}'
 
+      - name: 'Lint'
+        uses: 'JohnnyMorganz/stylua-action@1.0.0'
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --check .
+
       - name: 'Show Vim version'
         run: ${{ steps.vim.outputs.executable }} --version
 

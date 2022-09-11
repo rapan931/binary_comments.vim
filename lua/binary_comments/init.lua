@@ -1,6 +1,6 @@
 local api = vim.api
 local fn = vim.fn
-local blank = ' '
+local blank = " "
 
 ---@class BinaryCommentsCorner
 ---@field top_left string
@@ -15,11 +15,11 @@ local blank = ' '
 ---@field draw_below boolean draw_position
 local config = {
   corner = {
-    top_left = fn.strdisplaywidth('┌') == 1 and '┌' or '+',
-    bottom_left = fn.strdisplaywidth('└') == 1 and '└' or '+',
+    top_left = fn.strdisplaywidth("┌") == 1 and "┌" or "+",
+    bottom_left = fn.strdisplaywidth("└") == 1 and "└" or "+",
   },
-  vert = fn.strdisplaywidth('│') == 1 and '│' or '|',
-  hori = fn.strdisplaywidth('─') == 1 and '─' or '-',
+  vert = fn.strdisplaywidth("│") == 1 and "│" or "|",
+  hori = fn.strdisplaywidth("─") == 1 and "─" or "-",
   draw_below = true,
 }
 
@@ -59,21 +59,20 @@ end
 ---@param mode string mode
 ---@return boolean valid
 local function valid(pos1, pos2, mode)
-  if mode ~= 'v' and mode ~= 'V' then
-    api.nvim_echo({ { 'binary_comments.nvim: support only visual mode!', 'ErrorMsg' } }, true, {})
+  if mode ~= "v" and mode ~= "V" then
+    api.nvim_echo({ { "binary_comments.nvim: support only visual mode!", "ErrorMsg" } }, true, {})
     return false
   end
 
   if pos1[1] ~= pos2[1] then
-    api.nvim_echo({ { 'binary_comments.nvim: not support multi line!', 'ErrorMsg' } }, true, {})
+    api.nvim_echo({ { "binary_comments.nvim: not support multi line!", "ErrorMsg" } }, true, {})
     return false
   end
 
   local corner = config.corner
 
   if fn.strdisplaywidth(corner.top_left) ~= 1 or fn.strdisplaywidth(corner.bottom_left) ~= 1 then
-    api.nvim_echo({ { 'binary_comments.nvim: Only use a character with a display width of 1 for the ruled line!',
-      'ErrorMsg' } }, true, {})
+    api.nvim_echo({ { "binary_comments.nvim: Only use a character with a display width of 1 for the ruled line!", "ErrorMsg" } }, true, {})
     return false
   end
 
@@ -97,13 +96,13 @@ local function binary_length(str, start_pos)
   local margin_len = fn.strdisplaywidth(fn.strcharpart(fn.getline(start_pos[1]), 0, start_pos[2] - 1))
 
   local binary_len
-  if str:match('^[01]+$') then
+  if str:match("^[01]+$") then
     binary_len = #str
-  elseif str:match('^0b[01]+$') then
+  elseif str:match("^0b[01]+$") then
     margin_len = margin_len + 2
     binary_len = #str - 2
   else
-    api.nvim_echo({ { 'binary_comments.nvim: not binary!', 'ErrorMsg' } }, true, {})
+    api.nvim_echo({ { "binary_comments.nvim: not binary!", "ErrorMsg" } }, true, {})
     return nil, nil
   end
 
@@ -116,7 +115,6 @@ end
 ---@return string | nil header. if str "0b11111", return "│││││"
 ---@return string[] | nil rows list. if config.draw_below is false, reverse body in this function
 local function create_ruled_line(str, start_pos)
-
   local binary_len, margin_len = binary_length(str, start_pos)
   if binary_len == nil or margin_len == nil then
     return nil, nil
@@ -144,11 +142,11 @@ end
 ---@return number[] [line, col] start_pos
 ---@return number[] [line, col] end_pos
 local function get_pos(mode)
-  local dot_pos = vim.list_slice(fn.getcharpos('.'), 2, 3)
-  local v_pos = vim.list_slice(fn.getcharpos('v'), 2, 3)
+  local dot_pos = vim.list_slice(fn.getcharpos("."), 2, 3)
+  local v_pos = vim.list_slice(fn.getcharpos("v"), 2, 3)
 
   local start_pos, end_pos = sort_pos(dot_pos, v_pos)
-  if mode == 'V' then
+  if mode == "V" then
     start_pos[2] = 1
     end_pos[2] = fn.strchars(fn.getline(end_pos[1]))
   end
@@ -185,13 +183,13 @@ local M = {}
 
 ---@param override_config BinaryCommentsConfig
 M.setup = function(override_config)
-  config = vim.tbl_extend('force', config, override_config)
+  config = vim.tbl_extend("force", config, override_config)
 end
 
 ---draw ruled line.
 M.draw = function()
   l_draw()
-  api.nvim_feedkeys(api.nvim_replace_termcodes('<esc>', true, false, true), 'n', false)
+  api.nvim_feedkeys(api.nvim_replace_termcodes("<esc>", true, false, true), "n", false)
 end
 
 return M
