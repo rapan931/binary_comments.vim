@@ -182,9 +182,7 @@ end
 local M = {}
 
 ---@param override_config BinaryCommentsConfig
-M.setup = function(override_config)
-  config = vim.tbl_extend("force", config, override_config)
-end
+M.setup = function(override_config) config = vim.tbl_extend("force", config, override_config) end
 
 ---draw ruled line.
 M.draw = function()

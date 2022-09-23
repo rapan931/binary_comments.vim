@@ -9,9 +9,7 @@ local asserts = vassert.asserts
 local api = vim.api
 
 function helper.setup()
-  vim.keymap.set("x", "ge", function()
-    binary_comments.draw()
-  end)
+  vim.keymap.set("x", "ge", function() binary_comments.draw() end)
 end
 
 function helper.after_each()
@@ -19,9 +17,7 @@ function helper.after_each()
   helper.cleanup_loaded_modules(plugin_name)
 end
 
-asserts.create("all_lines"):register_same(function()
-  return api.nvim_buf_get_lines(0, 0, -1, false)
-end)
+asserts.create("all_lines"):register_same(function() return api.nvim_buf_get_lines(0, 0, -1, false) end)
 
 describe("binary_comments.draw()", function()
   setup(helper.setup)
