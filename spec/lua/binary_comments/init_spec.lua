@@ -3,8 +3,7 @@ local helper = require("vusted.helper")
 helper.root = helper.find_plugin_root(plugin_name)
 local binary_comments = helper.require("binary_comments")
 
-local vassert = require("vusted.assert")
-local asserts = vassert.asserts
+local asserts = require("vusted.assert").asserts
 
 local api = vim.api
 
