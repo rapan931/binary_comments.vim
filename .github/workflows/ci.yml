@@ -35,6 +35,7 @@ jobs:
       - name: "Show Vim version"
         run: ${{ steps.vim.outputs.executable }} --version
 
-      - run: make test
+      - name: "Test"
+        run: make test
         env:
           VUSTED_NVIM: ${{ steps.vim.outputs.executable }}
