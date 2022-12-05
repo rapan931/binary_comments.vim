@@ -1,4 +1,4 @@
-name: 'ci'
+name: "ci"
 on:
   push:
   pull_request:
@@ -9,34 +9,33 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        vim_type: ['Neovim']
-        vim_version: ['head', 'stable']
+        vim_type: ["Neovim"]
+        vim_version: ["head", "stable"]
         os: [ubuntu-latest]
     steps:
       - uses: actions/checkout@v3
       - uses: notomo/action-setup-nvim-lua@v1
 
-      - name: 'Install vusted'
-        uses: notomo/workflow/.github/actions/luarocks-install@main
-        with:
-          packages: vusted
+      - name: "Install vusted"
+        run: "luarocks --lua-version=5.1 install vusted"
 
-      - name: 'Setup Vim'
-        id: 'vim'
-        uses: 'thinca/action-setup-vim@v1'
+      - name: "Setup Vim"
+        id: "vim"
+        uses: "thinca/action-setup-vim@v1"
         with:
-          vim_version: '${{ matrix.vim_version }}'
-          vim_type: '${{ matrix.vim_type }}'
+          vim_version: "${{ matrix.vim_version }}"
+          vim_type: "${{ matrix.vim_type }}"
 
-      - name: 'Lint'
-        uses: 'JohnnyMorganz/stylua-action@v2'
+      - name: "Lint"
+        uses: "JohnnyMorganz/stylua-action@v2"
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           args: --check .
 
-      - name: 'Show Vim version'
+      - name: "Show Vim version"
         run: ${{ steps.vim.outputs.executable }} --version
 
-      - run: make test
+      - name: "Test"
+        run: make test
         env:
           VUSTED_NVIM: ${{ steps.vim.outputs.executable }}
